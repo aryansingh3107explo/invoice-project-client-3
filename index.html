@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SleekInvoice - Premium Invoice Generator</title>
+
+    <!-- Google Fonts: Outfit & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Local Stylesheet -->
+    <link rel="stylesheet" href="index.css">
+
+    <!-- html2pdf.js CDN (high fidelity HTML-to-PDF library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Animated Glow Background Orbs -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- ================= AUTH VIEW ================= -->
+    <div class="auth-wrapper" id="auth-section">
+        <div class="auth-card" id="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <h2 class="auth-title" id="auth-card-title">Welcome to SleekInvoice</h2>
+                <p class="auth-subtitle" id="auth-card-subtitle">Sign in to access your dashboard</p>
+            </div>
+
+            <form id="auth-form" autocomplete="off">
+                <!-- Username/Email Field -->
+                <div class="form-group">
+                    <label class="form-label" for="auth-username">Username or Email</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input class="form-input" type="text" id="auth-username" placeholder="Enter your username"
+                            required>
+                    </div>
+                </div>
+                <!-- Password Field -->
+                <div class="form-group">
+                    <label class="form-label" for="auth-password">Password</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input class="form-input" type="password" id="auth-password" placeholder="Enter your password"
+                            required>
+                    </div>
+                </div>
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary" id="auth-submit-btn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>Sign In</span>
+                </button>
+            </form>
+            <div class="auth-footer">
+                <span id="auth-toggle-text">Don't have an account?</span>
+                <span class="auth-link" id="auth-toggle-link">Sign Up</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MAIN APP VIEW ================= -->
+    <div class="app-layout" id="app-section" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <span class="logo-text">SleekInvoice</span>
+            </div>
+            <div class="user-profile">
+                <div class="profile-avatar" id="user-avatar">US</div>
+                <div class="profile-info">
+                    <div class="profile-name" id="user-display-name">Username</div>
+                    <div class="profile-role">Administrator</div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item active" id="nav-create">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Create Invoice</span>
+                </div>
+                <div class="nav-item" id="nav-history">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <span>Past Invoices</span>
+                </div>
+            </nav>
+            <div class="sidebar-footer">
+                <button type="button" class="btn-signout" id="btn-signout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="main-workspace">
+            <header class="workspace-header">
+                <div class="header-greet">
+                    <h1 id="header-welcome-msg">Welcome, User</h1>
+                </div>
+                <div class="header-date" id="current-date">Today's Date</div>
+            </header>
+
+            <div class="workspace-content">
+                <!-- ================= TAB: CREATE INVOICE ================= -->
+                <div class="tab-page active" id="page-create">
+                    <div class="invoice-grid">
+                        <!-- Left Side: Invoice Fields -->
+                        <section class="glass-card">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                                <span>Invoice Specifications</span>
+                            </h2>
+
+                            <form id="invoice-form" onsubmit="event.preventDefault();">
+                                <!-- Row 1: Sender Details -->
+                                <div class="form-row">
+                                    <div class="form-group-sub">
+                                        <label for="sender-name">Sender Business / Name</label>
+                                        <input class="form-control" type="text" id="sender-name"
+                                            placeholder="e.g. Acme Corporation" required>
+                                    </div>
+                                    <div class="form-group-sub">
+                                        <label for="sender-email">Sender Email (Optional)</label>
+                                        <input class="form-control" type="email" id="sender-email"
+                                            placeholder="sender@acme.com">
+                                    </div>
+                                </div>
+                                <div class="form-group-sub">
+                                    <label for="sender-address">Sender Address (Optional)</label>
+                                    <input class="form-control" type="text" id="sender-address"
+                                        placeholder="123 Innovation Way, Tech District">
+                                </div>
+
+                                <!-- Divider -->
+                                <div style="border-top: 1px solid var(--border-primary); margin: 20px 0;"></div>
+
+                                <!-- Row 2: Client Details -->
+                                <div class="form-row">
+                                    <div class="form-group-sub">
+                                        <label for="client-name">Client Name / Business</label>
+                                        <input class="form-control" type="text" id="client-name"
+                                            placeholder="e.g. John Doe" required>
+                                    </div>
+                                    <div class="form-group-sub">
+                                        <label for="client-email">Client Email (Optional)</label>
+                                        <input class="form-control" type="email" id="client-email"
+                                            placeholder="john.doe@example.com">
+                                    </div>
+                                </div>
+                                <div class="form-group-sub">
+                                    <label for="client-address">Client Address (Optional)</label>
+                                    <input class="form-control" type="text" id="client-address"
+                                        placeholder="456 Client St, Partner City">
+                                </div>
+
+                                <!-- Divider -->
+                                <div style="border-top: 1px solid var(--border-primary); margin: 20px 0;"></div>
+
+                                <!-- Row 3: Invoice Metadata -->
+                                <div class="form-row">
+                                    <div class="form-group-sub">
+                                        <label for="invoice-num">Invoice Number</label>
+                                        <input class="form-control" type="text" id="invoice-num"
+                                            placeholder="INV-2026-0001" required>
+                                    </div>
+                                    <div class="form-group-sub">
+                                        <label for="invoice-currency">Currency</label>
+                                        <select class="form-control" id="invoice-currency">
+                                            <option value="$">USD ($)</option>
+                                            <option value="€">EUR (€)</option>
+                                            <option value="£">GBP (£)</option>
+                                            <option value="₹">INR (₹)</option>
+                                            <option value="¥">JPY (¥)</option>
+                                            <option value="C$">CAD (C$)</option>
+                                            <option value="A$">AUD (A$)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group-sub">
+                                        <label for="invoice-date">Date Issued</label>
+                                        <input class="form-control" type="date" id="invoice-date" required>
+                                    </div>
+                                    <div class="form-group-sub">
+                                        <label for="invoice-due-date">Due Date</label>
+                                        <input class="form-control" type="date" id="invoice-due-date" required>
+                                    </div>
+                                </div>
+
+                                <!-- Items List -->
+                                <div class="items-section-header">
+                                    <h3>Line Items</h3>
+                                    <button type="button" class="btn-secondary-sm" id="btn-add-item">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <span>Add Item</span>
+                                    </button>
+                                </div>
+
+                                <div style="overflow-x: auto;">
+                                    <table class="invoice-items-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-desc">Description</th>
+                                                <th class="col-qty" style="text-align: center;">Qty</th>
+                                                <th class="col-rate" style="text-align: right;">Rate</th>
+                                                <th class="col-amount" style="text-align: right;">Amount</th>
+                                                <th class="col-delete"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="invoice-items-body">
+                                            <!-- Dynamic items populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Notes & Terms -->
+                                <div class="form-group-sub">
+                                    <label for="invoice-notes">Notes / Special Instructions</label>
+                                    <textarea class="form-control" id="invoice-notes" rows="3"
+                                        placeholder="Thank you for your business! Payment is expected within due date."></textarea>
+                                </div>
+                            </form>
+                        </section>
+
+                        <!-- Right Side: Live Preview & Action -->
+                        <aside class="preview-container">
+                            <!-- Invoice Preview Card -->
+                            <div class="invoice-preview-card" id="invoice-preview-container">
+                                <div class="preview-watermark">PREVIEW</div>
+
+                                <div class="invoice-pdf-layout" id="invoice-pdf-element">
+                                    <!-- PDF Header Section -->
+                                    <div class="invoice-pdf-header">
+                                        <div>
+                                            <div class="pdf-company-name" id="pdf-sender-name">Acme Corporation</div>
+                                            <div class="pdf-company-details" id="pdf-sender-details">
+                                                sender@domain.com<br>Sender Office Location</div>
+                                        </div>
+                                        <div class="pdf-meta-section">
+                                            <div class="pdf-title">INVOICE</div>
+                                            <div class="pdf-invoice-number" id="pdf-invoice-num">#INV-XXXX</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Addresses Section -->
+                                    <div class="invoice-pdf-addresses">
+                                        <div class="pdf-address-col">
+                                            <h4>Billed To</h4>
+                                            <p id="pdf-client-name">Client Business / Name</p>
+                                            <div class="pdf-client-details" id="pdf-client-details">
+                                                client@domain.com<br>Client Address</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dates Section -->
+                                    <div class="invoice-pdf-dates">
+                                        <div class="pdf-date-item">
+                                            <span>Issued:</span>
+                                            <span id="pdf-date-issued">--/--/----</span>
+                                        </div>
+                                        <div class="pdf-date-item">
+                                            <span>Due:</span>
+                                            <span id="pdf-date-due">--/--/----</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Table Section -->
+                                    <table class="pdf-items-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="pdf-col-desc">Description</th>
+                                                <th class="pdf-col-qty" style="text-align: center;">Qty</th>
+                                                <th class="pdf-col-rate" style="text-align: right;">Rate</th>
+                                                <th class="pdf-col-total" style="text-align: right;">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pdf-items-body">
+                                            <!-- Dynamic items populated here -->
+                                        </tbody>
+                                    </table>
+
+                                    <!-- Bottom Section -->
+                                    <div class="invoice-pdf-bottom">
+                                        <div class="pdf-notes-col">
+                                            <h4>Notes</h4>
+                                            <p id="pdf-notes-content">Thank you for your business!</p>
+                                        </div>
+                                        <div class="pdf-summary-col">
+                                            <div class="pdf-summary-row">
+                                                <span>Subtotal</span>
+                                                <span id="pdf-subtotal">$0.00</span>
+                                            </div>
+                                            <div class="pdf-summary-row">
+                                                <span>Discount</span>
+                                                <span id="pdf-discount">-$0.00</span>
+                                            </div>
+                                            <div class="pdf-summary-row">
+                                                <span>Tax</span>
+                                                <span id="pdf-tax">+$0.00</span>
+                                            </div>
+                                            <div class="pdf-summary-row final">
+                                                <span>Total Amount</span>
+                                                <span id="pdf-total-amount">$0.00</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Form Calculations & Save Actions -->
+                            <div class="glass-card" style="margin-top: 20px;">
+                                <div class="summary-container">
+                                    <!-- Discount percentage input -->
+                                    <div class="calc-row">
+                                        <span>Discount (%)</span>
+                                        <div class="calc-input-wrapper">
+                                            <input class="form-control" type="number" id="invoice-discount-pct" min="0"
+                                                max="100" value="0">
+                                        </div>
+                                    </div>
+                                    <!-- Tax percentage input -->
+                                    <div class="calc-row">
+                                        <span>Tax (%)</span>
+                                        <div class="calc-input-wrapper">
+                                            <input class="form-control" type="number" id="invoice-tax-pct" min="0"
+                                                max="100" value="0">
+                                        </div>
+                                    </div>
+                                    <!-- Final Total Display -->
+                                    <div class="calc-row total">
+                                        <span>Invoice Total:</span>
+                                        <span id="calc-grand-total">$0.00</span>
+                                    </div>
+                                </div>
+
+                                <div class="btn-actions-row">
+                                    <button type="button" class="btn-outline" id="btn-save-invoice">
+                                        <i class="fa-solid fa-floppy-disk"></i>
+                                        <span>Save Invoice</span>
+                                    </button>
+                                    <button type="button" class="btn-primary" id="btn-download-pdf">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                        <span>Download PDF</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+
+                <!-- ================= TAB: PAST INVOICES ================= -->
+                <div class="tab-page" id="page-history">
+                    <div class="history-controls">
+                        <div class="search-wrapper">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input class="search-input" type="text" id="search-history"
+                                placeholder="Search by invoice #, client, or sender...">
+                        </div>
+                    </div>
+
+                    <div class="invoices-empty" id="history-empty-view" style="display: none;">
+                        <i class="fa-solid fa-receipt"></i>
+                        <h3>No Saved Invoices</h3>
+                        <p>Generate, save, and manage your invoices here.</p>
+                    </div>
+
+                    <div class="invoices-grid" id="history-grid">
+                        <!-- Dynamic invoice cards populated here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- App Logic -->
+    <script src="app.js"></script>
+</body>
+
+</html>
