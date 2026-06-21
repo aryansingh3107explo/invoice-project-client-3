@@ -33,11 +33,6 @@ A modern and responsive invoice generation platform built with HTML, CSS, and Ja
 - Firebase
 - GitHub Pages
 
-## Live Demo
-
-https://aryansingh3107expo.github.io/invoice-project-client-3/
-
-## Screenshots
 
 ### Login Page
 Modern authentication interface with clean design.
