@@ -2,6 +2,9 @@
 
 A modern and responsive invoice generation platform built with HTML, CSS, and JavaScript. Create, manage, and preview professional invoices with a sleek dark-themed user interface.
 
+## live demo
+https://aryansingh3107explo.github.io/invoice-project-client-3/
+
 ## Features
 
 ### Authentication
